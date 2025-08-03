@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Encriptador Hacker</title>
+  <style>
+    body {
+      background-color: black;
+      color: #00ff00;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 20px;
+    }
+    input, textarea, button {
+      background-color: black;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+      padding: 10px;
+      width: 100%;
+      margin-top: 10px;
+      font-family: inherit;
+    }
+    h1 {
+      color: #00ff00;
+    }
+    .output {
+      white-space: pre-wrap;
+      margin-top: 20px;
+      border: 1px dashed #00ff00;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔐 Encriptador Hacker</h1>
+
+  <label>Mensaje:</label>
+  <textarea id="mensaje" rows="3"></textarea>
+
+  <label>Semilla (clave):</label>
+  <input type="text" id="clave" />
+
+  <button onclick="encriptar()">Encriptar</button>
+  <button onclick="desencriptar()">Desencriptar</button>
+
+  <div class="output" id="resultado">Resultado aparecerá aquí...</div>
+
+  <script>
+    function generarClave(texto, clave) {
+      clave = clave.toUpperCase();
+      let expandida = "";
+      let i = 0;
+      for (let c of texto) {
+        if (/[A-Z0-9]/.test(c.toUpperCase())) {
+          expandida += clave[i % clave.length];
+          i++;
+        } else {
+          expandida += c;
+        }
+      }
+      return expandida;
+    }
+
+    function encriptarTexto(texto, clave) {
+      texto = texto.toUpperCase();
+      let claveExpandida = generarClave(texto, clave);
+      let resultado = "";
+
+      for (let i = 0; i < texto.length; i++) {
+        let t = texto[i];
+        let k = claveExpandida[i];
+
+        if (/[A-Z]/.test(t)) {
+          let desplazamiento = k.charCodeAt(0) - 65;
+          let nuevaLetra = String.fromCharCode((t.charCodeAt(0) - 65 + desplazamiento) % 26 + 65);
+          resultado += nuevaLetra;
+        } else if (/[0-9]/.test(t)) {
+          let desplazamiento = k.charCodeAt(0) % 10;
+          let nuevaCifra = (parseInt(t) + desplazamiento) % 10;
+          resultado += nuevaCifra;
+        } else {
+          resultado += t;
+        }
+      }
+
+      return resultado;
+    }
+
+    function desencriptarTexto(texto, clave) {
+      texto = texto.toUpperCase();
+      let claveExpandida = generarClave(texto, clave);
+      let resultado = "";
+
+      for (let i = 0; i < texto.length; i++) {
+        let t = texto[i];
+        let k = claveExpandida[i];
+
+        if (/[A-Z]/.test(t)) {
+          let desplazamiento = k.charCodeAt(0) - 65;
+          let nuevaLetra = String.fromCharCode((t.charCodeAt(0) - 65 - desplazamiento + 26) % 26 + 65);
+          resultado += nuevaLetra;
+        } else if (/[0-9]/.test(t)) {
+          let desplazamiento = k.charCodeAt(0) % 10;
+          let nuevaCifra = (parseInt(t) - desplazamiento + 10) % 10;
+          resultado += nuevaCifra;
+        } else {
+          resultado += t;
+        }
+      }
+
+      return resultado;
+    }
+
+    function encriptar() {
+      let mensaje = document.getElementById("mensaje").value;
+      let clave = document.getElementById("clave").value;
+      if (!mensaje || !clave) return alert("Ingresa mensaje y semilla.");
+      let resultado = encriptarTexto(mensaje, clave);
+      document.getElementById("resultado").innerText = "🔒 Encriptado:\n" + resultado;
+    }
+
+    function desencriptar() {
+      let mensaje = document.getElementById("mensaje").value;
+      let clave = document.getElementById("clave").value;
+      if (!mensaje || !clave) return alert("Ingresa mensaje y semilla.");
+      let resultado = desencriptarTexto(mensaje, clave);
+      document.getElementById("resultado").innerText = "🔓 Desencriptado:\n" + resultado;
+    }
+  </script>
+</body>
+</html>
